@@ -1,4 +1,4 @@
-name: Deploy ke VM
+name: Deploy ke VM dengan Docker
 
 on:
   push:
@@ -18,8 +18,8 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_KEY }}
-          source: "index.html"
-          target: "/tmp"
+          source: "./*"
+          target: "/home/explore"
 
       - name: Copy index.html to nginx folder
         uses: appleboy/ssh-action@v1
@@ -28,5 +28,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            sudo mv /tmp/index.html /var/www/html
-            sudo systemctl restart nginx
+            cd /home/explore
+            docker build -t ci-cd-nginx:latest .
+            docker rm -f ci-cd-image || true
+            docker run -d --name ci-cd-container -p 80:80 ci-cd-image
