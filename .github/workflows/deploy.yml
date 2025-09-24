@@ -29,6 +29,6 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             cd /home/explore
-            docker build -t ci-cd-nginx:latest .
-            docker rm -f ci-cd-image || true
+            docker build -t ci-cd-image:latest .
+            docker rm -f ci-cd-container || true
             docker run -d --name ci-cd-container -p 80:80 ci-cd-image
